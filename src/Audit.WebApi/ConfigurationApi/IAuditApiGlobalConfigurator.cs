@@ -1,4 +1,5 @@
-﻿#if ASP_CORE
+﻿using Audit.Core;
+#if ASP_CORE
 using Microsoft.AspNetCore.Mvc.Filters;
 #else
 using ActionExecutingContext = System.Web.Http.Controllers.HttpActionContext;
@@ -78,6 +79,17 @@ namespace Audit.WebApi.ConfigurationApi
         /// </summary>
         /// <param name="includePredicate">A function of the executed context to determine whether the response body should be included on the audit output</param>
         IAuditApiGlobalConfigurator IncludeResponseBody(Func<ActionExecutedContext, bool> includePredicate);
+        /// <summary>
+        /// Specifies the event creation policy to use.
+        /// </summary>
+        /// <param name="creationPolicy">The event creation policy to use</param>
+        IAuditApiGlobalConfigurator WithCreationPolicy(EventCreationPolicy creationPolicy);
+        /// <summary>
+        /// Specifies a predicate to determine the event creation policy to use.
+        /// </summary>
+        /// <param name="creationPolicyPredicate">A function of the executing context to determine the event creation policy to use</param>
+        IAuditApiGlobalConfigurator WithCreationPolicy(Func<ActionExecutingContext, EventCreationPolicy?> creationPolicyPredicate);
+
     }
 
 }

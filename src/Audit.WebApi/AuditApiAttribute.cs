@@ -68,7 +68,11 @@ namespace Audit.WebApi
         /// Default is NULL to use the default ContextWrapper class.
         /// </summary>
         public Type ContextWrapperType { get; set; }
-        
+        /// <summary>
+        /// Gets or Sets the event creation policy to use.
+        /// </summary>
+        public EventCreationPolicy? CreationPolicy { get; set; }
+
         private IContextWrapper GetContextWrapper(HttpRequestMessage request)
         {
             if (ContextWrapperType == null)
@@ -87,7 +91,7 @@ namespace Audit.WebApi
             {
                 return;
             }
-            await _adapter.BeforeExecutingAsync(actionContext, GetContextWrapper(actionContext.Request), IncludeHeaders, IncludeRequestBody, SerializeActionParameters, EventTypeName);
+            await _adapter.BeforeExecutingAsync(actionContext, GetContextWrapper(actionContext.Request), IncludeHeaders, IncludeRequestBody, SerializeActionParameters, EventTypeName, CreationPolicy);
         }
 
         public override async Task OnActionExecutedAsync(HttpActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)

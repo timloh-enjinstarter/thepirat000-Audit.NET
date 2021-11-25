@@ -1,4 +1,5 @@
 ﻿#if ASP_CORE
+using Audit.Core;
 using Microsoft.AspNetCore.Http;
 using System;
 
@@ -67,6 +68,16 @@ namespace Audit.WebApi.ConfigurationApi
         /// </summary>
         /// <param name="includePredicate">A function of the executed context to determine whether the response body should be included on the audit output</param>
         IAuditMiddlewareConfigurator IncludeResponseBody(Func<HttpContext, bool> includePredicate);
+        /// <summary>
+        /// Specifies the event creation policy to use.
+        /// </summary>
+        /// <param name="creationPolicy">The event creation policy to use</param>
+        IAuditMiddlewareConfigurator WithCreationPolicy(EventCreationPolicy creationPolicy);
+        /// <summary>
+        /// Specifies a predicate to determine the event creation policy to use.
+        /// </summary>
+        /// <param name="creationPolicyPredicate">A function of the executing context to determine the event creation policy to use</param>
+        IAuditMiddlewareConfigurator WithCreationPolicy(Func<HttpContext, EventCreationPolicy?> creationPolicyPredicate);
     }
 }
 #endif

@@ -1,4 +1,5 @@
-﻿#if ASP_CORE
+﻿using Audit.Core;
+#if ASP_CORE
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 #else
@@ -23,6 +24,7 @@ namespace Audit.WebApi.ConfigurationApi
         internal Func<ActionExecutingContext, bool> _includeRequestBodyBuilder;
         internal Func<ActionExecutedContext, bool> _includeResponseBodyBuilder;
         internal Func<ActionExecutingContext, string> _eventTypeNameBuilder;
+        internal Func<ActionExecutingContext, EventCreationPolicy?> _creationPolicyBuilder;
 #if ASP_NET
         internal Func<HttpRequestMessage, IContextWrapper> _contextWrapperBuilder;
 #endif
@@ -99,6 +101,17 @@ namespace Audit.WebApi.ConfigurationApi
             _includeResponseBodyBuilder = includeBuilder;
             return this;
         }
-    }
 
+        public IAuditApiGlobalConfigurator WithCreationPolicy(EventCreationPolicy creationPolicy)
+        {
+            _creationPolicyBuilder = _ => creationPolicy;
+            return this;
+        }
+
+        public IAuditApiGlobalConfigurator WithCreationPolicy(Func<ActionExecutingContext, EventCreationPolicy?> creationPolicyPredicate)
+        {
+            _creationPolicyBuilder = creationPolicyPredicate;
+            return this;
+        }
+    }
 }

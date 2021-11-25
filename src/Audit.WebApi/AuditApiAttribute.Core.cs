@@ -69,6 +69,10 @@ namespace Audit.WebApi
         /// Gets or sets a value indicating whether the action arguments should be pre-serialized to the audit event.
         /// </summary>
         public bool SerializeActionParameters { get; set; }
+        /// <summary>
+        /// Gets or Sets the event creation policy to use.
+        /// </summary>
+        public EventCreationPolicy? CreationPolicy { get; set; }
 
         public AuditApiAttribute()
         {
@@ -82,7 +86,7 @@ namespace Audit.WebApi
                 await next.Invoke();
                 return;
             }
-            await _adapter.BeforeExecutingAsync(context, IncludeHeaders, IncludeRequestBody, SerializeActionParameters, EventTypeName);
+            await _adapter.BeforeExecutingAsync(context, IncludeHeaders, IncludeRequestBody, SerializeActionParameters, EventTypeName, CreationPolicy);
             var actionExecutedContext = await next.Invoke();
             await _adapter.AfterExecutedAsync(actionExecutedContext, IncludeModelState, ShouldIncludeResponseBody(actionExecutedContext), IncludeResponseHeaders);
         }

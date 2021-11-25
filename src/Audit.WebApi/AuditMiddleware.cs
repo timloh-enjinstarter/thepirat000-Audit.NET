@@ -36,6 +36,7 @@ namespace Audit.WebApi
             var includeRequest = _config._includeRequestBodyBuilder != null ? _config._includeRequestBodyBuilder.Invoke(context) : false;
             var eventTypeName = _config._eventTypeNameBuilder?.Invoke(context);
             var includeResponse = _config._includeResponseBodyBuilder != null ? _config._includeResponseBodyBuilder.Invoke(context) : false;
+            var creationPolicy = _config._creationPolicyBuilder?.Invoke(context);
             var originalBody = context.Response.Body;
 
             // pre-filter
@@ -45,7 +46,7 @@ namespace Audit.WebApi
                 return;
             }
 
-            await BeforeInvoke(context, includeHeaders, includeRequest, eventTypeName);
+            await BeforeInvoke(context, includeHeaders, includeRequest, eventTypeName, creationPolicy);
 
             if (includeResponse)
             {
@@ -85,7 +86,7 @@ namespace Audit.WebApi
             }
         }
 
-        private async Task BeforeInvoke(HttpContext context, bool includeHeaders, bool includeRequestBody, string eventTypeName)
+        private async Task BeforeInvoke(HttpContext context, bool includeHeaders, bool includeRequestBody, string eventTypeName, EventCreationPolicy? creationPolicy)
         {
             var auditAction = new AuditApiAction
             {
@@ -114,7 +115,7 @@ namespace Audit.WebApi
             {
                 Action = auditAction
             };
-            var auditScope = await AuditScope.CreateAsync(new AuditScopeOptions() { EventType = eventType, AuditEvent = auditEventAction });
+            var auditScope = await AuditScope.CreateAsync(new AuditScopeOptions() { EventType = eventType, AuditEvent = auditEventAction, CreationPolicy = creationPolicy });
             context.Items[AuditApiHelper.AuditApiActionKey] = auditAction;
             context.Items[AuditApiHelper.AuditApiScopeKey] = auditScope;
         }

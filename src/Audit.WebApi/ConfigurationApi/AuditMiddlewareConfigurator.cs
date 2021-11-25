@@ -1,4 +1,5 @@
 ﻿#if ASP_CORE
+using Audit.Core;
 using Microsoft.AspNetCore.Http;
 using System;
 
@@ -12,6 +13,7 @@ namespace Audit.WebApi.ConfigurationApi
         internal Func<HttpContext, bool> _includeRequestBodyBuilder;
         internal Func<HttpContext, bool> _includeResponseBodyBuilder;
         internal Func<HttpContext, string> _eventTypeNameBuilder;
+        internal Func<HttpContext, EventCreationPolicy?> _creationPolicyBuilder;
 
         public IAuditMiddlewareConfigurator IncludeHeaders(bool include = true)
         {
@@ -76,6 +78,18 @@ namespace Audit.WebApi.ConfigurationApi
         public IAuditMiddlewareConfigurator WithEventType(Func<HttpContext, string> eventTypeNamePredicate)
         {
             _eventTypeNameBuilder = eventTypeNamePredicate;
+            return this;
+        }
+
+        public IAuditMiddlewareConfigurator WithCreationPolicy(EventCreationPolicy creationPolicy)
+        {
+            _creationPolicyBuilder = _ => creationPolicy;
+            return this;
+        }
+
+        public IAuditMiddlewareConfigurator WithCreationPolicy(Func<HttpContext, EventCreationPolicy?> creationPolicyPredicate)
+        {
+            _creationPolicyBuilder = creationPolicyPredicate;
             return this;
         }
     }

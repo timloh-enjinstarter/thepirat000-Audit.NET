@@ -58,7 +58,8 @@ namespace Audit.WebApi
         /// Occurs before the action method is invoked.
         /// </summary>
         internal async Task BeforeExecutingAsync(ActionExecutingContext actionContext,
-            bool includeHeaders, bool includeRequestBody, bool serializeParams, string eventTypeName)
+            bool includeHeaders, bool includeRequestBody, bool serializeParams, string eventTypeName,
+            EventCreationPolicy? creationPolicy)
         {
             var httpContext = actionContext.HttpContext;
             var actionDescriptor = actionContext.ActionDescriptor as ControllerActionDescriptor;
@@ -69,12 +70,19 @@ namespace Audit.WebApi
                 .Replace("{controller}", auditAction.ControllerName)
                 .Replace("{action}", auditAction.ActionName)
                 .Replace("{url}", auditAction.RequestUrl);
+
             // Create the audit scope
             var auditEventAction = new AuditEventWebApi()
             {
                 Action = auditAction
             };
-            var auditScope = await AuditScope.CreateAsync(new AuditScopeOptions() { EventType = eventType, AuditEvent = auditEventAction, CallingMethod = actionDescriptor.MethodInfo });
+            var auditScope = await AuditScope.CreateAsync(new AuditScopeOptions() 
+            { 
+                EventType = eventType, 
+                AuditEvent = auditEventAction, 
+                CallingMethod = actionDescriptor.MethodInfo, 
+                CreationPolicy = creationPolicy 
+            });
             httpContext.Items[AuditApiHelper.AuditApiActionKey] = auditAction;
             httpContext.Items[AuditApiHelper.AuditApiScopeKey] = auditScope;
         }

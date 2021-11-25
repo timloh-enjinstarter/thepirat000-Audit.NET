@@ -32,6 +32,7 @@ namespace Audit.WebApi
         protected Func<ActionExecutingContext, bool> _includeRequestBodyBuilder;
         protected Func<ActionExecutedContext, bool> _includeResponseBodyBuilder;
         protected Func<ActionExecutingContext, string> _eventTypeNameBuilder;
+        protected Func<ActionExecutingContext, EventCreationPolicy?> _creationPolicyBuilder;
 #if ASP_NET
         protected Func<HttpRequestMessage, IContextWrapper> _contextWrapperBuilder;
 #endif
@@ -60,6 +61,7 @@ namespace Audit.WebApi
             _includeResponseBodyBuilder = cfg._config._includeResponseBodyBuilder;
             _eventTypeNameBuilder = cfg._config._eventTypeNameBuilder;
             _serializeActionParameters = cfg._config._serializeActionParameters;
+            _creationPolicyBuilder = cfg._config._creationPolicyBuilder;
 #if ASP_NET
             _contextWrapperBuilder = cfg._config._contextWrapperBuilder;
 #endif
@@ -89,6 +91,10 @@ namespace Audit.WebApi
         {
             return _eventTypeNameBuilder?.Invoke(actionContext);
         }
+        protected EventCreationPolicy? CreationPolicy(ActionExecutingContext actionContext)
+        {
+            return _creationPolicyBuilder?.Invoke(actionContext);
+        }
 #if ASP_NET
         protected IContextWrapper ContextWrapper(HttpRequestMessage request)
         {
@@ -106,7 +112,7 @@ namespace Audit.WebApi
                 await next.Invoke();
                 return;
             }
-            await _adapter.BeforeExecutingAsync(context, IncludeRequestHeaders(context), IncludeRequestBody(context), _serializeActionParameters, EventTypeName(context));
+            await _adapter.BeforeExecutingAsync(context, IncludeRequestHeaders(context), IncludeRequestBody(context), _serializeActionParameters, EventTypeName(context), CreationPolicy(context));
             var actionExecutedContext = await next.Invoke();
             await _adapter.AfterExecutedAsync(actionExecutedContext, IncludeModelState(actionExecutedContext), IncludeResponseBody(actionExecutedContext), IncludeResponseHeaders(actionExecutedContext));
         }
@@ -120,7 +126,7 @@ namespace Audit.WebApi
                 return;
             }
             await _adapter.BeforeExecutingAsync(actionContext, ContextWrapper(actionContext.Request), IncludeRequestHeaders(actionContext), 
-                IncludeRequestBody(actionContext), _serializeActionParameters, EventTypeName(actionContext));
+                IncludeRequestBody(actionContext), _serializeActionParameters, EventTypeName(actionContext), CreationPolicy(actionContext));
         }
 
         public override async Task OnActionExecutedAsync(ActionExecutedContext actionExecutedContext, CancellationToken cancellationToken)
