@@ -1,0 +1,14 @@
+{
+    "version": "0.2",
+    "words": [
+        "appsettings",
+        "aspnetcore",
+        "devcontainer",
+        "npgsql"
+    ],
+    "ignorePaths": [
+        "/.devcontainer/devcontainer.json",
+        "/.vscode/launch.json",
+        "/.vscode/tasks.json"
+    ]
+}
