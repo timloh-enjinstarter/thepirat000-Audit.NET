@@ -15,19 +15,19 @@
     <PackageId>Audit.NET</PackageId>
     <PackageTags>Audit;Trail;Log</PackageTags>
     <PackageIcon>icon.png</PackageIcon>
-    <PackageProjectUrl>https://github.com/thepirat000/Audit.NET</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/timloh-enjinstarter/thepirat000-Audit.NET</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.3' ">1.6.1</NetStandardImplicitPackageVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-	<RepositoryUrl>https://github.com/thepirat000/Audit.NET</RepositoryUrl>
+    <RepositoryUrl>https://github.com/timloh-enjinstarter/thepirat000-Audit.NET</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\..\LICENSE" Pack="true" PackagePath="LICENSE" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Update="tools\Install.ps1">
       <Pack>true</Pack>
